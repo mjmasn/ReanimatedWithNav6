@@ -1,0 +1,826 @@
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-63-hermes.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-63-hermes.aar
+index 620930a..e29cc3c 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-63-hermes.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-63-hermes.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-63-jsc.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-63-jsc.aar
+index 87a39e7..a20eb70 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-63-jsc.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-63-jsc.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-64-hermes.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-64-hermes.aar
+index 7c1621c..36a644a 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-64-hermes.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-64-hermes.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-64-jsc.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-64-jsc.aar
+index 66f844e..3dd913a 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-64-jsc.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-64-jsc.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-65-hermes.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-65-hermes.aar
+index 27f6856..fad0ee3 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-65-hermes.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-65-hermes.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-65-jsc.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-65-jsc.aar
+index 78d8910..7fbe1c2 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-65-jsc.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-65-jsc.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-66-hermes.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-66-hermes.aar
+index 88deefb..e7c18cf 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-66-hermes.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-66-hermes.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-66-jsc.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-66-jsc.aar
+index 96d7907..200da77 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-66-jsc.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-66-jsc.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-67-hermes.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-67-hermes.aar
+index 88deefb..edf682b 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-67-hermes.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-67-hermes.aar differ
+diff --git a/node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar b/node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar
+index 96d7907..e1bc4c2 100644
+Binary files a/node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar and b/node_modules/react-native-reanimated/android/react-native-reanimated-67-jsc.aar differ
+diff --git a/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.h b/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.h
+index 3156e48..1fb2734 100644
+--- a/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.h
++++ b/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.h
+@@ -5,10 +5,10 @@
+ NS_ASSUME_NONNULL_BEGIN
+ 
+ typedef NS_ENUM(NSInteger, ViewState) {
++  Inactive,
+   Appearing,
+   Disappearing,
+   Layout,
+-  Inactive,
+   ToRemove,
+ };
+ 
+diff --git a/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.m b/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.m
+index 055222b..962a320 100644
+--- a/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.m
++++ b/node_modules/react-native-reanimated/ios/LayoutReanimation/REAAnimationsManager.m
+@@ -150,6 +150,10 @@ - (void)removeLeftovers
+   NSMutableSet<NSNumber *> *roots = [NSMutableSet new];
+   for (NSNumber *viewTag in _toRemove) {
+     UIView *view = _viewForTag[viewTag];
++    if (view == nil) {
++      view = [_reaUiManager viewForReactTag:viewTag];
++      _viewForTag[viewTag] = view;
++    }
+     [self findRoot:view roots:roots];
+   }
+   for (NSNumber *viewTag in roots) {
+diff --git a/node_modules/react-native-reanimated/ios/native/NativeMethods.h b/node_modules/react-native-reanimated/ios/native/NativeMethods.h
+index 352b882..efc68ac 100644
+--- a/node_modules/react-native-reanimated/ios/native/NativeMethods.h
++++ b/node_modules/react-native-reanimated/ios/native/NativeMethods.h
+@@ -1,11 +1,11 @@
+ #import <Foundation/Foundation.h>
++#import <RNGestureHandlerStateManager.h>
+ #import <React/RCTUIManager.h>
+ #include <string>
+ #import <string>
+ #include <utility>
+ #include <vector>
+ #import <vector>
+-#import "RNGestureHandlerStateManager.h"
+ 
+ namespace reanimated {
+ 
+diff --git a/node_modules/react-native-reanimated/ios/native/NativeProxy.mm b/node_modules/react-native-reanimated/ios/native/NativeProxy.mm
+index a318eb9..67feedd 100644
+--- a/node_modules/react-native-reanimated/ios/native/NativeProxy.mm
++++ b/node_modules/react-native-reanimated/ios/native/NativeProxy.mm
+@@ -3,6 +3,7 @@
+ #import <React/RCTUIManager.h>
+ #import <folly/json.h>
+ 
++#import <RNGestureHandlerStateManager.h>
+ #import "LayoutAnimationsProxy.h"
+ #import "NativeMethods.h"
+ #import "NativeProxy.h"
+@@ -12,7 +13,6 @@
+ #import "REAModule.h"
+ #import "REANodesManager.h"
+ #import "REAUIManager.h"
+-#import "RNGestureHandlerStateManager.h"
+ 
+ #if __has_include(<reacthermes/HermesExecutorFactory.h>)
+ #import <reacthermes/HermesExecutorFactory.h>
+diff --git a/node_modules/react-native-reanimated/lib/Animated.js b/node_modules/react-native-reanimated/lib/src/Animated.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/Animated.js
+rename to node_modules/react-native-reanimated/lib/src/Animated.js
+diff --git a/node_modules/react-native-reanimated/lib/ConfigHelper.js b/node_modules/react-native-reanimated/lib/src/ConfigHelper.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ConfigHelper.js
+rename to node_modules/react-native-reanimated/lib/src/ConfigHelper.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedEventEmitter.js b/node_modules/react-native-reanimated/lib/src/ReanimatedEventEmitter.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedEventEmitter.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedEventEmitter.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedModule.js b/node_modules/react-native-reanimated/lib/src/ReanimatedModule.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedModule.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedModule.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedModule.macos.js b/node_modules/react-native-reanimated/lib/src/ReanimatedModule.macos.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedModule.macos.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedModule.macos.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedModule.native.js b/node_modules/react-native-reanimated/lib/src/ReanimatedModule.native.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedModule.native.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedModule.native.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedModule.windows.js b/node_modules/react-native-reanimated/lib/src/ReanimatedModule.windows.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedModule.windows.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedModule.windows.js
+diff --git a/node_modules/react-native-reanimated/lib/ReanimatedModuleCompat.js b/node_modules/react-native-reanimated/lib/src/ReanimatedModuleCompat.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/ReanimatedModuleCompat.js
+rename to node_modules/react-native-reanimated/lib/src/ReanimatedModuleCompat.js
+diff --git a/node_modules/react-native-reanimated/lib/__mocks__/ReanimatedEventEmitter.js b/node_modules/react-native-reanimated/lib/src/__mocks__/ReanimatedEventEmitter.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/__mocks__/ReanimatedEventEmitter.js
+rename to node_modules/react-native-reanimated/lib/src/__mocks__/ReanimatedEventEmitter.js
+diff --git a/node_modules/react-native-reanimated/lib/__mocks__/ReanimatedModule.native.js b/node_modules/react-native-reanimated/lib/src/__mocks__/ReanimatedModule.native.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/__mocks__/ReanimatedModule.native.js
+rename to node_modules/react-native-reanimated/lib/src/__mocks__/ReanimatedModule.native.js
+diff --git a/node_modules/react-native-reanimated/lib/createAnimatedComponent.js b/node_modules/react-native-reanimated/lib/src/createAnimatedComponent.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/createAnimatedComponent.js
+rename to node_modules/react-native-reanimated/lib/src/createAnimatedComponent.js
+diff --git a/node_modules/react-native-reanimated/lib/index.js b/node_modules/react-native-reanimated/lib/src/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/index.js
+rename to node_modules/react-native-reanimated/lib/src/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/Easing.js b/node_modules/react-native-reanimated/lib/src/reanimated1/Easing.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/Easing.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/Easing.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/SpringConfig.js b/node_modules/react-native-reanimated/lib/src/reanimated1/SpringConfig.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/SpringConfig.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/SpringConfig.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/Transitioning.js b/node_modules/react-native-reanimated/lib/src/reanimated1/Transitioning.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/Transitioning.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/Transitioning.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/Animation.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/Animation.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/Animation.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/Animation.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/SpringUtils.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/SpringUtils.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/SpringUtils.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/SpringUtils.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/backwardCompatibleAnimWrapper.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/backwardCompatibleAnimWrapper.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/backwardCompatibleAnimWrapper.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/backwardCompatibleAnimWrapper.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/decay.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/decay.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/decay.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/decay.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/spring.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/spring.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/spring.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/spring.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/animations/timing.js b/node_modules/react-native-reanimated/lib/src/reanimated1/animations/timing.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/animations/timing.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/animations/timing.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/base.js b/node_modules/react-native-reanimated/lib/src/reanimated1/base.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/base.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/base.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedAlways.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedAlways.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedAlways.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedAlways.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedBezier.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedBezier.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedBezier.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedBezier.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedBlock.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedBlock.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedBlock.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedBlock.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCall.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCall.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCall.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCall.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCallFunc.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCallFunc.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCallFunc.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCallFunc.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedClock.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedClock.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedClock.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedClock.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedClockTest.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedClockTest.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedClockTest.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedClockTest.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCode.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCode.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCode.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCode.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedConcat.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedConcat.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedConcat.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedConcat.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCond.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCond.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedCond.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedCond.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedDebug.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedDebug.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedDebug.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedDebug.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedEvent.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedEvent.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedEvent.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedEvent.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedFunction.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedFunction.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedFunction.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedFunction.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedNode.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedNode.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedNode.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedNode.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedOperator.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedOperator.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedOperator.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedOperator.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedParam.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedParam.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedParam.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedParam.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedProps.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedProps.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedProps.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedProps.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedSet.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedSet.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedSet.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedSet.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStartClock.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStartClock.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStartClock.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStartClock.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStopClock.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStopClock.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStopClock.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStopClock.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStyle.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStyle.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedStyle.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedStyle.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedTransform.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedTransform.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedTransform.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedTransform.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedValue.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/AnimatedValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/AnimatedValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/Core.test.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/Core.test.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/Core.test.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/Core.test.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/InternalAnimatedValue.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/InternalAnimatedValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/InternalAnimatedValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/InternalAnimatedValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/__mocks__/AnimatedProps.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/__mocks__/AnimatedProps.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/__mocks__/AnimatedProps.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/__mocks__/AnimatedProps.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/core/createEventObjectProxyPolyfill.js b/node_modules/react-native-reanimated/lib/src/reanimated1/core/createEventObjectProxyPolyfill.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/core/createEventObjectProxyPolyfill.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/core/createEventObjectProxyPolyfill.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/__mocks__/evaluateOnce.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/__mocks__/evaluateOnce.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/__mocks__/evaluateOnce.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/__mocks__/evaluateOnce.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/acc.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/acc.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/acc.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/acc.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/color.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/color.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/color.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/color.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/diff.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/diff.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/diff.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/diff.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/diffClamp.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/diffClamp.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/diffClamp.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/diffClamp.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/evaluateOnce.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/evaluateOnce.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/evaluateOnce.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/evaluateOnce.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/index.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/interpolate.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/interpolate.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/interpolate.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/interpolate.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/interpolateColors.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/interpolateColors.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/interpolateColors.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/interpolateColors.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/onChange.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/onChange.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/onChange.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/onChange.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/derived/useCode.js b/node_modules/react-native-reanimated/lib/src/reanimated1/derived/useCode.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/derived/useCode.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/derived/useCode.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/index.js b/node_modules/react-native-reanimated/lib/src/reanimated1/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/operators.js b/node_modules/react-native-reanimated/lib/src/reanimated1/operators.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/operators.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/operators.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/useValue.js b/node_modules/react-native-reanimated/lib/src/reanimated1/useValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/useValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/useValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated1/val.js b/node_modules/react-native-reanimated/lib/src/reanimated1/val.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated1/val.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated1/val.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/Bezier.js b/node_modules/react-native-reanimated/lib/src/reanimated2/Bezier.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/Bezier.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/Bezier.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/Colors.js b/node_modules/react-native-reanimated/lib/src/reanimated2/Colors.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/Colors.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/Colors.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/Easing.js b/node_modules/react-native-reanimated/lib/src/reanimated2/Easing.js
+similarity index 98%
+rename from node_modules/react-native-reanimated/lib/reanimated2/Easing.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/Easing.js
+index a4e7b42..c00afc8 100644
+--- a/node_modules/react-native-reanimated/lib/reanimated2/Easing.js
++++ b/node_modules/react-native-reanimated/lib/src/reanimated2/Easing.js
+@@ -149,6 +149,10 @@ function bezier(x1, y1, x2, y2) {
+         },
+     };
+ }
++function bezierFn(x1, y1, x2, y2) {
++    'worklet';
++    return Bezier(x1, y1, x2, y2);
++}
+ /**
+  * Runs an easing function forwards.
+  */
+@@ -194,6 +198,7 @@ const EasingObject = {
+     back,
+     bounce,
+     bezier,
++    bezierFn,
+     in: in_,
+     out,
+     inOut,
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/NativeMethods.js b/node_modules/react-native-reanimated/lib/src/reanimated2/NativeMethods.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/NativeMethods.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/NativeMethods.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/NativeReanimated/NativeReanimated.js b/node_modules/react-native-reanimated/lib/src/reanimated2/NativeReanimated/NativeReanimated.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/NativeReanimated/NativeReanimated.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/NativeReanimated/NativeReanimated.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/NativeReanimated/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/NativeReanimated/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/NativeReanimated/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/NativeReanimated/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/PlatformChecker.js b/node_modules/react-native-reanimated/lib/src/reanimated2/PlatformChecker.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/PlatformChecker.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/PlatformChecker.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/PropAdapters.js b/node_modules/react-native-reanimated/lib/src/reanimated2/PropAdapters.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/PropAdapters.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/PropAdapters.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/UpdateProps.js b/node_modules/react-native-reanimated/lib/src/reanimated2/UpdateProps.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/UpdateProps.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/UpdateProps.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/ViewDescriptorsSet.js b/node_modules/react-native-reanimated/lib/src/reanimated2/ViewDescriptorsSet.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/ViewDescriptorsSet.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/ViewDescriptorsSet.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/WorkletEventHandler.js b/node_modules/react-native-reanimated/lib/src/reanimated2/WorkletEventHandler.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/WorkletEventHandler.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/WorkletEventHandler.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/__mocks__/MutableValue.js b/node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/MutableValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/__mocks__/MutableValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/MutableValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/__mocks__/NativeReanimated.js b/node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/NativeReanimated.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/__mocks__/NativeReanimated.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/NativeReanimated.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/__mocks__/NativeReanimated.native.js b/node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/NativeReanimated.native.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/__mocks__/NativeReanimated.native.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/__mocks__/NativeReanimated.native.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/commonTypes.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/commonTypes.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/commonTypes.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/commonTypes.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/decay.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/decay.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/decay.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/decay.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/delay.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/delay.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/delay.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/delay.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/repeat.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/repeat.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/repeat.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/repeat.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/sequence.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/sequence.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/sequence.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/sequence.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/spring.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/spring.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/spring.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/spring.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/styleAnimation.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/styleAnimation.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/styleAnimation.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/styleAnimation.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/timing.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/timing.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/timing.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/timing.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/animation/util.js b/node_modules/react-native-reanimated/lib/src/reanimated2/animation/util.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/animation/util.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/animation/util.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/commonTypes.js b/node_modules/react-native-reanimated/lib/src/reanimated2/commonTypes.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/commonTypes.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/commonTypes.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/component/FlatList.js b/node_modules/react-native-reanimated/lib/src/reanimated2/component/FlatList.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/component/FlatList.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/component/FlatList.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/component/WrappedComponents.js b/node_modules/react-native-reanimated/lib/src/reanimated2/component/WrappedComponents.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/component/WrappedComponents.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/component/WrappedComponents.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/component/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/component/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/component/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/component/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/core.js b/node_modules/react-native-reanimated/lib/src/reanimated2/core.js
+similarity index 98%
+rename from node_modules/react-native-reanimated/lib/reanimated2/core.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/core.js
+index 117505d..14703ac 100644
+--- a/node_modules/react-native-reanimated/lib/reanimated2/core.js
++++ b/node_modules/react-native-reanimated/lib/src/reanimated2/core.js
+@@ -275,9 +275,11 @@ if (!NativeReanimatedModule.useOnlyV1) {
+                 info: runOnJS(capturableConsole.info),
+             };
+             _setGlobalConsole(console);
+-            global.performance = {
+-                now: global._chronoNow,
+-            };
++            if (global.performance == null) {
++                global.performance = {
++                    now: global._chronoNow,
++                };
++            }
+         })();
+     }
+ }
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/globals.d.ts b/node_modules/react-native-reanimated/lib/src/reanimated2/globals.d.ts
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/globals.d.ts
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/globals.d.ts
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/Hooks.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/Hooks.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/Hooks.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/Hooks.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/commonTypes.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/commonTypes.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/commonTypes.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/commonTypes.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedGestureHandler.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedGestureHandler.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedGestureHandler.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedGestureHandler.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedReaction.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedReaction.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedReaction.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedReaction.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedRef.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedRef.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedRef.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedRef.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedScrollHandler.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedScrollHandler.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedScrollHandler.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedScrollHandler.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedStyle.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedStyle.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useAnimatedStyle.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useAnimatedStyle.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useDerivedValue.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useDerivedValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useDerivedValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useDerivedValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/useSharedValue.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/useSharedValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/useSharedValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/useSharedValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/hook/utils.js b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/utils.js
+similarity index 94%
+rename from node_modules/react-native-reanimated/lib/reanimated2/hook/utils.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/hook/utils.js
+index 20b560e..4829fc9 100644
+--- a/node_modules/react-native-reanimated/lib/reanimated2/hook/utils.js
++++ b/node_modules/react-native-reanimated/lib/src/reanimated2/hook/utils.js
+@@ -95,7 +95,12 @@ export function parseColors(updates) {
+     'worklet';
+     for (const key in updates) {
+         if (colorProps.indexOf(key) !== -1) {
+-            updates[key] = processColor(updates[key]);
++            // value could be an animation in which case processColor will recognize it and will return undefined
++            // -> in such a case we don't want to override style of that key
++            const processedColor = processColor(updates[key]);
++            if (processedColor !== undefined) {
++                updates[key] = processedColor;
++            }
+         }
+     }
+ }
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/interpolation.js b/node_modules/react-native-reanimated/lib/src/reanimated2/interpolation.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/interpolation.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/interpolation.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/jestUtils.js b/node_modules/react-native-reanimated/lib/src/reanimated2/jestUtils.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/jestUtils.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/jestUtils.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/JSReanimated.js b/node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/JSReanimated.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/JSReanimated.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/JSReanimated.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/Mapper.js b/node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/Mapper.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/Mapper.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/Mapper.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/MapperRegistry.js b/node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/MapperRegistry.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/MapperRegistry.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/MapperRegistry.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/MutableValue.js b/node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/MutableValue.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/MutableValue.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/MutableValue.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/js-reanimated/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/js-reanimated/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/LayoutAnimationRepository.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/LayoutAnimationRepository.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/LayoutAnimationRepository.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/LayoutAnimationRepository.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/BaseAnimationBuilder.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/BaseAnimationBuilder.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/BaseAnimationBuilder.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/BaseAnimationBuilder.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/ComplexAnimationBuilder.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/ComplexAnimationBuilder.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/ComplexAnimationBuilder.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/ComplexAnimationBuilder.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/Keyframe.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/Keyframe.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/Keyframe.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/Keyframe.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/commonTypes.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/commonTypes.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/commonTypes.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/commonTypes.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/animationBuilder/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/animationBuilder/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Bounce.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Bounce.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Bounce.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Bounce.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Default.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Default.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Default.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Default.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Fade.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Fade.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Fade.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Fade.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Flip.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Flip.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Flip.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Flip.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Lightspeed.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Lightspeed.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Lightspeed.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Lightspeed.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Pinwheel.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Pinwheel.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Pinwheel.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Pinwheel.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Roll.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Roll.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Roll.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Roll.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Rotate.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Rotate.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Rotate.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Rotate.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Slide.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Slide.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Slide.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Slide.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Stretch.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Stretch.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Stretch.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Stretch.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Zoom.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Zoom.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/Zoom.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/Zoom.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultAnimations/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultAnimations/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/CurvedTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/CurvedTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/CurvedTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/CurvedTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/EntryExitTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/EntryExitTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/EntryExitTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/EntryExitTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/FadingTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/FadingTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/FadingTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/FadingTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/JumpingTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/JumpingTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/JumpingTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/JumpingTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/LinearTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/LinearTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/LinearTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/LinearTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/SequencedTransition.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/SequencedTransition.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/SequencedTransition.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/SequencedTransition.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/defaultTransitions/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/defaultTransitions/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/index.js b/node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/index.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/layoutReanimation/index.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/layoutReanimation/index.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/mock.js b/node_modules/react-native-reanimated/lib/src/reanimated2/mock.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/mock.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/mock.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/platform-specific/RNRenderer.js b/node_modules/react-native-reanimated/lib/src/reanimated2/platform-specific/RNRenderer.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/platform-specific/RNRenderer.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/platform-specific/RNRenderer.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/platform-specific/RNRenderer.web.js b/node_modules/react-native-reanimated/lib/src/reanimated2/platform-specific/RNRenderer.web.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/platform-specific/RNRenderer.web.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/platform-specific/RNRenderer.web.js
+diff --git a/node_modules/react-native-reanimated/lib/reanimated2/utils.js b/node_modules/react-native-reanimated/lib/src/reanimated2/utils.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/reanimated2/utils.js
+rename to node_modules/react-native-reanimated/lib/src/reanimated2/utils.js
+diff --git a/node_modules/react-native-reanimated/lib/setAndForwardRef.js b/node_modules/react-native-reanimated/lib/src/setAndForwardRef.js
+similarity index 100%
+rename from node_modules/react-native-reanimated/lib/setAndForwardRef.js
+rename to node_modules/react-native-reanimated/lib/src/setAndForwardRef.js
+diff --git a/node_modules/react-native-reanimated/plugin.js b/node_modules/react-native-reanimated/plugin.js
+index 2fb0c21..90fd2ff 100644
+--- a/node_modules/react-native-reanimated/plugin.js
++++ b/node_modules/react-native-reanimated/plugin.js
+@@ -158,6 +158,7 @@ const gestureHandlerBuilderMethods = new Set([
+   'onEnd',
+   'onFinalize',
+   'onUpdate',
++  'onChange',
+   'onTouchesDown',
+   'onTouchesMove',
+   'onTouchesUp',
+diff --git a/node_modules/react-native-reanimated/react-native-reanimated.d.ts b/node_modules/react-native-reanimated/react-native-reanimated.d.ts
+index 18f81cd..4e90d31 100644
+--- a/node_modules/react-native-reanimated/react-native-reanimated.d.ts
++++ b/node_modules/react-native-reanimated/react-native-reanimated.d.ts
+@@ -981,6 +981,12 @@ declare module 'react-native-reanimated' {
+       y1: number,
+       x2: number,
+       y2: number
++    ): { factory: () => Animated.EasingFunction };
++    bezierFn(
++      x1: number,
++      y1: number,
++      x2: number,
++      y2: number
+     ): Animated.EasingFunction;
+     in(easing: Animated.EasingFunction): Animated.EasingFunction;
+     out(easing: Animated.EasingFunction): Animated.EasingFunction;
+diff --git a/node_modules/react-native-reanimated/src/reanimated2/Easing.ts b/node_modules/react-native-reanimated/src/reanimated2/Easing.ts
+index 3fd5449..cb5936e 100644
+--- a/node_modules/react-native-reanimated/src/reanimated2/Easing.ts
++++ b/node_modules/react-native-reanimated/src/reanimated2/Easing.ts
+@@ -221,6 +221,16 @@ function bezier(
+   };
+ }
+ 
++function bezierFn(
++  x1: number,
++  y1: number,
++  x2: number,
++  y2: number
++): (x: number) => number {
++  'worklet';
++  return Bezier(x1, y1, x2, y2);
++}
++
+ /**
+  * Runs an easing function forwards.
+  */
+@@ -269,6 +279,7 @@ const EasingObject = {
+   back,
+   bounce,
+   bezier,
++  bezierFn,
+   in: in_,
+   out,
+   inOut,
+diff --git a/node_modules/react-native-reanimated/src/reanimated2/core.ts b/node_modules/react-native-reanimated/src/reanimated2/core.ts
+index 2e0c38a..e9ae28f 100644
+--- a/node_modules/react-native-reanimated/src/reanimated2/core.ts
++++ b/node_modules/react-native-reanimated/src/reanimated2/core.ts
+@@ -383,9 +383,11 @@ if (!NativeReanimatedModule.useOnlyV1) {
+         info: runOnJS(capturableConsole.info),
+       };
+       _setGlobalConsole(console);
+-      global.performance = {
+-        now: global._chronoNow,
+-      };
++      if (global.performance == null) {
++        global.performance = {
++          now: global._chronoNow,
++        };
++      }
+     })();
+   }
+ }
+diff --git a/node_modules/react-native-reanimated/src/reanimated2/hook/utils.ts b/node_modules/react-native-reanimated/src/reanimated2/hook/utils.ts
+index 02c940f..d2526b8 100644
+--- a/node_modules/react-native-reanimated/src/reanimated2/hook/utils.ts
++++ b/node_modules/react-native-reanimated/src/reanimated2/hook/utils.ts
+@@ -163,7 +163,12 @@ export function parseColors(updates: AnimatedStyle): void {
+   'worklet';
+   for (const key in updates) {
+     if (colorProps.indexOf(key) !== -1) {
+-      updates[key] = processColor(updates[key]);
++      // value could be an animation in which case processColor will recognize it and will return undefined
++      // -> in such a case we don't want to override style of that key
++      const processedColor = processColor(updates[key]);
++      if (processedColor !== undefined) {
++        updates[key] = processedColor;
++      }
+     }
+   }
+ }
